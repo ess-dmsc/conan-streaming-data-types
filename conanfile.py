@@ -1,3 +1,4 @@
+import shutil
 from conans import ConanFile, CMake, tools
 from conans.util import files
 
@@ -20,6 +21,10 @@ class StreamingDataTypesConan(ConanFile):
 
     def build(self):
         files.mkdir("./{}/build".format(self.name))
+        shutil.copyfile(
+            "conanbuildinfo.cmake",
+            "./{}/build/conanbuildinfo.cmake".format(self.name)
+        )
         with tools.chdir("./{}/build".format(self.name)):
             cmake = CMake(self)
             cmake.configure(source_dir="..", build_dir=".")
