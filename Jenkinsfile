@@ -2,7 +2,7 @@ project = "conan-streaming-data-types"
 
 conan_remote = "ess-dmsc-local"
 conan_user = "ess-dmsc"
-conan_pkg_channel = "testing"
+conan_pkg_channel = "stable"
 
 // This is a header-only package.
 images = [
