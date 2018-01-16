@@ -8,7 +8,7 @@ class StreamingDataTypesConan(ConanFile):
     version = "3e85b23"
     license = "BSD 2-Clause"
     url = "https://bintray.com/ess-dmsc/streaming-data-types"
-    settings = "os", "compiler", "build_type", "arch"
+    settings = "compiler", "arch"
     generators = "cmake"
     requires = "FlatBuffers/1.8.0@ess-dmsc/stable"
 
