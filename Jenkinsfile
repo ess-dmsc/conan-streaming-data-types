@@ -5,30 +5,30 @@ conan_user = "ess-dmsc"
 conan_pkg_channel = "stable"
 
 images = [
-    'centos': [
-        'name': 'essdmscdm/centos-build-node:0.9.4',
-        'sh': 'sh'
-    ],
-    'centos-gcc6': [
-        'name': 'essdmscdm/centos-gcc6-build-node:0.3.4',
-        'sh': '/usr/bin/scl enable rh-python35 devtoolset-6 -- /bin/bash'
-    ],
-    'fedora': [
-        'name': 'essdmscdm/fedora-build-node:0.4.2',
-        'sh': 'sh'
-    ],
-    'debian': [
-        'name': 'essdmscdm/debian-build-node:0.1.1',
-        'sh': 'sh'
-    ],
-    'ubuntu1604': [
-        'name': 'essdmscdm/ubuntu16.04-build-node:0.0.2',
-        'sh': 'sh'
-    ],
-    'ubuntu1710': [
-        'name': 'essdmscdm/ubuntu17.10-build-node:0.0.3',
-        'sh': 'sh'
-    ]
+  'centos7': [
+    'name': 'essdmscdm/centos7-build-node:1.0.1',
+    'sh': 'sh'
+  ],
+  'centos7-gcc6': [
+    'name': 'essdmscdm/centos7-gcc6-build-node:1.0.0',
+    'sh': '/usr/bin/scl enable rh-python35 devtoolset-6 -- /bin/bash'
+  ],
+  'debian9': [
+  'name': 'essdmscdm/debian9-build-node:1.0.0',
+  'sh': 'sh'
+  ],
+  'fedora25': [
+    'name': 'essdmscdm/fedora25-build-node:1.0.0',
+    'sh': 'sh'
+  ],
+  'ubuntu1604': [
+    'name': 'essdmscdm/ubuntu16.04-build-node:2.0.0',
+    'sh': 'sh'
+  ],
+  'ubuntu1710': [
+    'name': 'essdmscdm/ubuntu17.10-build-node:1.0.0',
+    'sh': 'sh'
+  ]
 ]
 
 base_container_name = "${project}-${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
@@ -81,7 +81,8 @@ def get_pipeline(image_key) {
         stage("${image_key}: Package") {
           sh """docker exec ${container_name} ${custom_sh} -c \"
             cd ${project} && \
-            conan create ${conan_user}/${conan_pkg_channel}
+            conan create . ${conan_user}/${conan_pkg_channel} \
+              --build=outdated
           \""""
         }  // stage
 
@@ -126,7 +127,8 @@ def get_macos_pipeline() {
         }  // stage
 
         stage("macOS: Package") {
-          sh "conan create ${conan_user}/${conan_pkg_channel}"
+          sh "conan create . ${conan_user}/${conan_pkg_channel} \
+            --build=outdated"
         }  // stage
 
         stage("macOS: Upload") {
