@@ -4,6 +4,8 @@ conan_remote = "ess-dmsc-local"
 conan_user = "ess-dmsc"
 conan_pkg_channel = "stable"
 
+remote_upload_node = "centos7"
+
 images = [
   'centos7': [
     'name': 'essdmscdm/centos7-build-node:3.0.0',
@@ -21,6 +23,15 @@ images = [
 
 base_container_name = "${project}-${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 
+if (conan_pkg_channel == "stable") {
+  if (env.BRANCH_NAME != "master") {
+    error("Only the master branch can create a package for the stable channel")
+  }
+  conan_upload_flag = "--no-overwrite"
+} else {
+  conan_upload_flag = ""
+}
+
 def get_pipeline(image_key) {
   return {
     node('docker') {
@@ -31,6 +42,8 @@ def get_pipeline(image_key) {
         def container = image.run("\
           --name ${container_name} \
           --tty \
+          --cpus=2 \
+          --memory=4GB \
           --network=host \
           --env http_proxy=${env.http_proxy} \
           --env https_proxy=${env.https_proxy} \
@@ -72,16 +85,55 @@ def get_pipeline(image_key) {
             conan create . ${conan_user}/${conan_pkg_channel} \
               --build=outdated
           \""""
+
+          // Use shell script to avoid escaping issues
+          pkg_name_and_version = sh(
+            script: """docker exec ${container_name} ${custom_sh} -c \"
+                cd ${project} &&
+                ./get_conan_pkg_name_and_version.sh
+              \"""",
+            returnStdout: true
+          ).trim()
         }  // stage
 
-        stage("${image_key}: Upload") {
+        stage("${image_key}: Local upload") {
           sh """docker exec ${container_name} ${custom_sh} -c \"
-            upload_conan_package.sh ${project}/conanfile.py \
-              ${conan_remote} \
-              ${conan_user} \
-              ${conan_pkg_channel}
+            conan upload \
+              --all \
+              ${conan_upload_flag} \
+              --remote ${conan_remote} \
+              ${pkg_name_and_version}@${conan_user}/${conan_pkg_channel}
           \""""
-        }
+        }  // stage
+
+        // Upload to remote repository only once
+        if (image_key == remote_upload_node) {
+          stage("${image_key}: Remote upload") {
+            withCredentials([
+              usernamePassword(
+                credentialsId: 'cow-bot-bintray-username-and-api-key',
+                passwordVariable: 'COWBOT_PASSWORD',
+                usernameVariable: 'COWBOT_USERNAME'
+              )
+            ]) {
+              sh """docker exec ${container_name} ${custom_sh} -c \"
+                set +x
+                conan user \
+                  --password '${COWBOT_PASSWORD}' \
+                  --remote ess-dmsc \
+                  ${COWBOT_USERNAME} \
+                  > /dev/null
+              \""""
+            }  // withCredentials
+
+            sh """docker exec ${container_name} ${custom_sh} -c \"
+              conan upload \
+                ${conan_upload_flag} \
+                --remote ess-dmsc \
+                ${pkg_name_and_version}@${conan_user}/${conan_pkg_channel}
+            \""""
+          }  // stage
+        }  // if
       } finally {
         sh "docker stop ${container_name}"
         sh "docker rm -f ${container_name}"
@@ -117,6 +169,11 @@ def get_macos_pipeline() {
         stage("macOS: Package") {
           sh "conan create . ${conan_user}/${conan_pkg_channel} \
             --build=outdated"
+
+            pkg_name_and_version = sh(
+              script: "./get_conan_pkg_name_and_version.sh",
+              returnStdout: true
+            ).trim()
         }  // stage
 
         stage("macOS: Upload") {
@@ -124,6 +181,14 @@ def get_macos_pipeline() {
             ${conan_remote} \
             ${conan_user} \
             ${conan_pkg_channel}"
+        }  // stage
+
+        stage("macOS: Upload") {
+          sh "conan upload \
+            --all \
+            ${conan_upload_flag} \
+            --remote ${conan_remote} \
+            ${pkg_name_and_version}@${conan_user}/${conan_pkg_channel}"
         }  // stage
       }  // dir
     }  // node
