@@ -9,15 +9,15 @@ remote_upload_node = "centos7"
 images = [
   'centos7': [
     'name': 'essdmscdm/centos7-build-node:3.0.0',
-    'sh': '/usr/bin/scl enable devtoolset-6 -- /bin/bash'
+    'sh': '/usr/bin/scl enable devtoolset-6 -- /bin/bash -e'
   ],
   'debian9': [
     'name': 'essdmscdm/debian9-build-node:2.0.0',
-    'sh': 'sh'
+    'sh': 'bash -e'
   ],
   'ubuntu1804': [
     'name': 'essdmscdm/ubuntu18.04-build-node:1.1.0',
-    'sh': 'sh'
+    'sh': 'bash -e'
   ]
 ]
 
@@ -66,10 +66,10 @@ def get_pipeline(image_key) {
             )
           ]) {
             sh """docker exec ${container_name} ${custom_sh} -c \"
-              set +x && \
+              set +x
               conan remote add \
                 --insert 0 \
-                ${conan_remote} ${local_conan_server} && \
+                ${conan_remote} ${local_conan_server}
               conan user \
                 --password '${CONAN_PASSWORD}' \
                 --remote ${conan_remote} \
@@ -81,7 +81,7 @@ def get_pipeline(image_key) {
 
         stage("${image_key}: Package") {
           sh """docker exec ${container_name} ${custom_sh} -c \"
-            cd ${project} && \
+            cd ${project}
             conan create . ${conan_user}/${conan_pkg_channel} \
               --build=outdated
           \""""
@@ -89,7 +89,7 @@ def get_pipeline(image_key) {
           // Use shell script to avoid escaping issues
           pkg_name_and_version = sh(
             script: """docker exec ${container_name} ${custom_sh} -c \"
-                cd ${project} &&
+                cd ${project}
                 ./get_conan_pkg_name_and_version.sh
               \"""",
             returnStdout: true
