@@ -5,19 +5,19 @@ from conans.util import files
 
 class StreamingDataTypesConan(ConanFile):
     name = "streaming-data-types"
-    version = "2246f84"
+    version = "6cd05e4"
     license = "BSD 2-Clause"
     url = "https://bintray.com/ess-dmsc/streaming-data-types"
     settings = "compiler", "arch"
     generators = "cmake"
-    requires = "FlatBuffers/1.9.0@ess-dmsc/stable"
+    requires = "FlatBuffers/1.10.0@ess-dmsc/stable"
 
     def source(self):
         self.run(
             "git clone https://github.com/ess-dmsc/{}.git".format(self.name)
         )
         with tools.chdir("./{}".format(self.name)):
-            self.run("git checkout 2246f84b16423b7ac18e901bf4c43a006fe635dc")
+            self.run("git checkout 6cd05e42ea47f215add975794b3b06c1e02282a7")
 
     def build(self):
         files.mkdir("./{}/build".format(self.name))
