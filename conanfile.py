@@ -5,7 +5,7 @@ from conans.util import files
 
 class StreamingDataTypesConan(ConanFile):
     name = "streaming-data-types"
-    version = "5099bd6"
+    version = "1b0c1a7"
     license = "BSD 2-Clause"
     url = "https://bintray.com/ess-dmsc/streaming-data-types"
     settings = "compiler", "arch"
@@ -17,7 +17,7 @@ class StreamingDataTypesConan(ConanFile):
             "git clone https://github.com/ess-dmsc/{}.git".format(self.name)
         )
         with tools.chdir("./{}".format(self.name)):
-            self.run("git checkout 5099bd6")
+            self.run("git checkout 1b0c1a7")
 
     def build(self):
         files.mkdir("./{}/build".format(self.name))
