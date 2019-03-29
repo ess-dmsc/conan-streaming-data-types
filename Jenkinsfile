@@ -47,7 +47,7 @@ def get_macos_pipeline() {
         }  // stage
 
         stage("macOS: Package") {
-          sh "conan create . ${conan_user}/${conan_pkg_channel} \
+          sh "conan create . ${conan_user}/${conanPackageChannel} \
             --build=outdated"
 
             pkg_name_and_version = sh(
@@ -60,7 +60,7 @@ def get_macos_pipeline() {
           sh "upload_conan_package.sh conanfile.py \
             ${conan_remote} \
             ${conan_user} \
-            ${conan_pkg_channel}"
+            ${conanPackageChannel}"
         }  // stage
 
         stage("macOS: Upload") {
@@ -68,7 +68,7 @@ def get_macos_pipeline() {
             --all \
             ${conan_upload_flag} \
             --remote ${conan_remote} \
-            ${pkg_name_and_version}@${conan_user}/${conan_pkg_channel}"
+            ${pkg_name_and_version}@${conan_user}/${conanPackageChannel}"
         }  // stage
       }  // dir
     }  // node
