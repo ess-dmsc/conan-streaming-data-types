@@ -10,7 +10,7 @@ class StreamingDataTypesConan(ConanFile):
     url = "https://bintray.com/ess-dmsc/streaming-data-types"
     settings = "compiler", "arch"
     generators = "cmake"
-    requires = "FlatBuffers/1.10.0@ess-dmsc/stable"
+    requires = "FlatBuffers/1.10.0-dm1@ess-dmsc/stable"
 
     def source(self):
         self.run(
