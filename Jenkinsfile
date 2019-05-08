@@ -26,6 +26,10 @@ def get_macos_pipeline() {
   return {
     node('macos') {
       cleanWs()
+      // temporary until we have migrated to official flatbuffers conan package
+      // in our our repositories, otherwise case difference in package name causes
+      // conan to fail
+      sh "conan remove -f FlatBuffers/*"
       dir("${project}") {
         stage("macOS: Checkout") {
           checkout scm
