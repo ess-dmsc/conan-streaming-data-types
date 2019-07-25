@@ -6,7 +6,7 @@ project = "conan-streaming-data-types"
 
 conan_remote = "ess-dmsc-local"
 conan_user = "ess-dmsc"
-conanPackageChannel = 'stable'
+conanPackageChannel = 'testing'
 
 containerBuildNodes = [
   'centos': ContainerBuildNode.getDefaultContainerBuildNode('centos7'),
@@ -20,6 +20,11 @@ packageBuilder.defineRemoteUploadNode('centos')
 
 builders = packageBuilder.createPackageBuilders { container ->
   packageBuilder.addConfiguration(container)
+  
+  // Rebuild flatbuffers on alpine as binary version built against glibc doesn't work (alpine has musl instead)
+  if (container.key == 'alpine') {
+    sh "conan install --build flatbuffers/1.10.0@google/stable"  
+  }
 }
 
 def get_macos_pipeline() {
