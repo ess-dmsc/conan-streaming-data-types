@@ -6,7 +6,7 @@ project = "conan-streaming-data-types"
 
 conan_remote = "ess-dmsc-local"
 conan_user = "ess-dmsc"
-conanPackageChannel = 'stable'
+conanPackageChannel = 'testing'
 
 containerBuildNodes = [
   'centos': ContainerBuildNode.getDefaultContainerBuildNode('centos7'),
