@@ -5,7 +5,7 @@ from conans.util import files
 
 class StreamingDataTypesConan(ConanFile):
     name = "streaming-data-types"
-    version = "b2faa3c"
+    version = "47eb85b"
     license = "BSD 2-Clause"
     url = "https://bintray.com/ess-dmsc/streaming-data-types"
     settings = "compiler", "arch"
