@@ -4,7 +4,6 @@ import ecdcpipeline.ConanPackageBuilder
 
 project = "conan-streaming-data-types"
 
-conan_remote = "ess-dmsc-local"
 conan_user = "ess-dmsc"
 conanPackageChannel = 'stable'
 
@@ -35,44 +34,9 @@ def get_macos_pipeline() {
           checkout scm
         }  // stage
 
-        stage("macOS: Conan setup") {
-          withCredentials([
-            string(
-              credentialsId: 'local-conan-server-password',
-              variable: 'CONAN_PASSWORD'
-            )
-          ]) {
-            sh "conan user \
-              --password '${CONAN_PASSWORD}' \
-              --remote ${conan_remote} \
-              ${conan_user} \
-              > /dev/null"
-          }  // withCredentials
-        }  // stage
-
         stage("macOS: Package") {
           sh "conan create . ${conan_user}/${conanPackageChannel} \
             --build=outdated"
-
-            pkg_name_and_version = sh(
-              script: "./get_conan_pkg_name_and_version.sh",
-              returnStdout: true
-            ).trim()
-        }  // stage
-
-        stage("macOS: Upload") {
-          sh "upload_conan_package.sh conanfile.py \
-            ${conan_remote} \
-            ${conan_user} \
-            ${conanPackageChannel}"
-        }  // stage
-
-        stage("macOS: Upload") {
-          sh "conan upload \
-            --all \
-            ${conan_upload_flag} \
-            --remote ${conan_remote} \
-            ${pkg_name_and_version}@${conan_user}/${conanPackageChannel}"
         }  // stage
       }  // dir
     }  // node
