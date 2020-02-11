@@ -5,12 +5,12 @@ from conans.util import files
 
 class StreamingDataTypesConan(ConanFile):
     name = "streaming-data-types"
-    version = "70c9a71"
+    version = "c670575"
     license = "BSD 2-Clause"
     url = "https://bintray.com/ess-dmsc/streaming-data-types"
     settings = "compiler", "arch"
     generators = "cmake"
-    requires = "flatbuffers/1.10.0@google/stable"
+    requires = "flatbuffers/1.11.0@google/stable"
 
     def source(self):
         self.run(
