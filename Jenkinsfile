@@ -8,9 +8,9 @@ conan_user = "ess-dmsc"
 conanPackageChannel = 'stable'
 
 containerBuildNodes = [
-  'centos': ContainerBuildNode.getDefaultContainerBuildNode('centos7'),
-  'debian9': ContainerBuildNode.getDefaultContainerBuildNode('debian9'),
-  'ubuntu1804': ContainerBuildNode.getDefaultContainerBuildNode('ubuntu1804'),
+  'centos': ContainerBuildNode.getDefaultContainerBuildNode('centos7-gcc8'),
+  'debian9': ContainerBuildNode.getDefaultContainerBuildNode('debian10'),
+  'ubuntu1804': ContainerBuildNode.getDefaultContainerBuildNode('ubuntu1804-gcc8'),
 ]
 
 packageBuilder = new ConanPackageBuilder(this, containerBuildNodes, conanPackageChannel)
