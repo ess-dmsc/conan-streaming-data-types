@@ -5,7 +5,7 @@ import ecdcpipeline.ConanPackageBuilder
 project = "conan-streaming-data-types"
 
 conan_user = "ess-dmsc"
-conanPackageChannel = 'testing'
+conanPackageChannel = 'stable'
 
 containerBuildNodes = [
   'centos': ContainerBuildNode.getDefaultContainerBuildNode('centos7-gcc8'),
