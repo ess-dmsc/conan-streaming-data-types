@@ -9,8 +9,8 @@ conanPackageChannel = 'stable'
 
 containerBuildNodes = [
   'centos': ContainerBuildNode.getDefaultContainerBuildNode('centos7-gcc8'),
-  'debian9': ContainerBuildNode.getDefaultContainerBuildNode('debian10'),
-  'ubuntu1804': ContainerBuildNode.getDefaultContainerBuildNode('ubuntu1804-gcc8'),
+  'debian': ContainerBuildNode.getDefaultContainerBuildNode('debian10'),
+  'ubuntu': ContainerBuildNode.getDefaultContainerBuildNode('ubuntu2204'),
 ]
 
 packageBuilder = new ConanPackageBuilder(this, containerBuildNodes, conanPackageChannel)
