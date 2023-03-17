@@ -44,7 +44,9 @@ def get_macos_pipeline() {
 
 node {
   checkout scm
-  builders['macOS'] = get_macos_pipeline()
+  if (env.ENABLE_MACOS_BUILDS.toUpperCase() == 'TRUE') {
+    builders['macOS'] = get_macos_pipeline()
+  }
   parallel builders
   cleanWs()
 }
