@@ -9,7 +9,7 @@ If you have made some changes to *streaming-data-types* and subsequently also wa
 
 1. Edit line 8 of the *conanfile.py*-file in this repository to checkout the version of *streaming-data-types* that you want to package. Note that this is used to indicate the version of the conan package.
 
-2. Edit line 9 of *Jenkinsfile* and set `conanPackageChannel` to `testing` if you want to use this package before the schema's PR is accepted into [streaming-data-types](https://github.com/ess-dmsc/streaming-data-types).
+2. Edit line 8 of *Jenkinsfile* and set `conanPackageChannel` to `testing` if you want to use this package before the schema's PR is accepted into [streaming-data-types](https://github.com/ess-dmsc/streaming-data-types).
 
 3. Conan package should be automaticaly build and after some time will be available as `streaming-data-types/XXXXXXX@ess-dmsc/testing`.
 
