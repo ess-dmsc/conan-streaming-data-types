@@ -45,15 +45,15 @@ container_build_node:
         conan_package_creation "."
 
         # Upload conan packages
-        # if [[ "$CI_COMMIT_REF_NAME" != "master" ]]; then
-        #   echo "Skipping upload stage: only the master branch can upload to the stable channel"
-        # else
-        # Upload to Conan packages to Conan-External
-        upload_packages_to_conan_external "."
+        if [[ "$CI_COMMIT_REF_NAME" != "master" ]]; then
+          echo "Skipping upload stage: only the master branch can upload to the stable channel"
+        else
+          # Upload to Conan packages to Conan-External
+          upload_packages_to_conan_external "."
 
-          # # Upload Conan packages to Conan-Release if this is ther target container
-          # if [[ "$CONTAINER" == "$TARGET_CONTAINER_UPLOAD_REMOTE" ]]; then
-        upload_packages_to_conan_release "."
-        #   fi
-        # fi
+          # Upload Conan packages to Conan-Release if this is ther target container
+          if [[ "$CONTAINER" == "$TARGET_CONTAINER_UPLOAD_REMOTE" ]]; then
+            upload_packages_to_conan_release "."
+          fi
+        fi
       EOF
