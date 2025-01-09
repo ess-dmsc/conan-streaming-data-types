@@ -35,7 +35,7 @@ container_build_node:
   script:
     - echo "Starting build job for $PROJECT_NAME on $CONTAINER"
     - |
-      $SHELL <<EOF
+      $SHELL <<'EOF'
         # Sourcing GitLab CI functions
         source .ci_functions.sh
 
