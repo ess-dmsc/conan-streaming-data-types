@@ -57,3 +57,10 @@ container_build_node:
           fi
         fi
       EOF
+  rules:
+    # Automatically trigger on merge request pipelines with new commits
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    # Automatically trigger when the merge request is merged
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "master"'
+    # Allow manual execution in other scenarios
+    - when: manual
