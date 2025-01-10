@@ -1,0 +1,66 @@
+stages:
+  - container_build_node
+
+variables:
+  CONAN_USER: "ess-dmsc"
+  CONAN_PKG_CHANNEL: "stable"
+  PROJECT_NAME: "conan-streaming-data-types"
+  TARGET_CONTAINER_UPLOAD_REMOTE: "centos7-gcc11"
+  CONAN_EXTERNAL_NAME: "ecdc-conan-external"
+  CONAN_EXTERNAL_URL: "https://artifactory.esss.lu.se/artifactory/api/conan/ecdc-conan-external"
+  CONAN_RELEASE_NAME: "ecdc-conan-release"
+  CONAN_RELEASE_URL: "https://artifactory.esss.lu.se/artifactory/api/conan/ecdc-conan-release"
+
+# Container Build Node Stage so the Conan package can be built for all platforms
+container_build_node:
+  stage: container_build_node
+  tags:
+    - dc-zone
+    - docker
+  parallel:
+    matrix:
+      - CONTAINER: "centos7-gcc11"
+        IMAGE: "registry.esss.lu.se/ecdc/ess-dmsc/docker-centos7-build-node:12.3.0"
+        SHELL: "/usr/bin/scl enable devtoolset-11 rh-python38 -- /bin/bash -e -x"
+      - CONTAINER: "almalinux8-gcc12"
+        IMAGE: "registry.esss.lu.se/ecdc/ess-dmsc/docker-almalinux8-build-node:1.1.0"
+        SHELL: "/usr/bin/scl enable gcc-toolset-12 -- /bin/bash -e -x"
+      - CONTAINER: "debian11"
+        IMAGE: "registry.esss.lu.se/ecdc/ess-dmsc/docker-debian11-build-node:5.2.0"
+        SHELL: "bash -e -x"
+      - CONTAINER: "ubuntu2204"
+        IMAGE: "registry.esss.lu.se/ecdc/ess-dmsc/docker-ubuntu2204-build-node:5.0.0"
+        SHELL: "bash -e -x"
+  image: $IMAGE
+  script:
+    - echo "Starting build job for $PROJECT_NAME on $CONTAINER"
+    - |
+      $SHELL <<'EOF'
+        # Sourcing GitLab CI functions
+        source .ci_functions.sh
+
+        setup_conan "$CONAN_EXTERNAL_NAME" "$CONAN_EXTERNAL_URL"
+        setup_conan "$CONAN_RELEASE_NAME" "$CONAN_RELEASE_URL"
+        
+        conan_package_creation "."
+
+        # Upload conan packages
+        if [[ "$CI_COMMIT_REF_NAME" != "master" ]]; then
+          echo "Skipping upload stage: only the master branch can upload to the stable channel"
+        else
+          # Upload to Conan packages to Conan-External
+          upload_packages_to_conan_external "."
+
+          # Upload Conan packages to Conan-Release if this is ther target container
+          if [[ "$CONTAINER" == "$TARGET_CONTAINER_UPLOAD_REMOTE" ]]; then
+            upload_packages_to_conan_release "."
+          fi
+        fi
+      EOF
+  rules:
+    # Automatically trigger on merge request pipelines with new commits
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    # Automatically trigger when the merge request is merged
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "master"'
+    # Allow manual execution in other scenarios
+    - when: manual
