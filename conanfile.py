@@ -5,7 +5,7 @@ from conans.util import files
 
 class StreamingDataTypesConan(ConanFile):
     name = "streaming-data-types"
-    version = "5fde74d"
+    version = "dce8d4e"
     license = "BSD 2-Clause"
     settings = "compiler", "arch"
     generators = "cmake"
