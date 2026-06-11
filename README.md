@@ -1,36 +1,25 @@
 # conan-streaming-data-types
 
-Conan package for [streaming-data-types](https://github.com/ess-dmsc/streaming-data-types)
-(experimental).
+Conan package for [streaming-data-types](https://gitlab.esss.lu.se/ecdc/ess-dmsc/conan-streaming-data-types) ([github mirror](https://github.com/ess-dmsc/streaming-data-types)).
 
 ## Updating the conan package
 
-If you have made some changes to *streaming-data-types* and subsequently also want to update the conan-package, follow these instructions:
+If you have made some changes to _streaming-data-types_ and subsequently also want to update the conan-package, follow these instructions:
 
-1. Edit line 8 of the *conanfile.py*-file in this repository to checkout the version of *streaming-data-types* that you want to package. Note that this is used to indicate the version of the conan package.
+1. Edit line 8 of the _conanfile.py_-file in this repository to checkout the version of _streaming-data-types_ that you want to package. Note that this is used to indicate the version of the conan package.
 
-2. Edit line 9 of *Jenkinsfile* and set `conanPackageChannel` to `testing` if you want to use this package before the schema's PR is accepted into [streaming-data-types](https://github.com/ess-dmsc/streaming-data-types).
+2. When in the directory of the local copy of _conan-streaming-data-types_, execute this command:
 
-3. Conan package should be automaticaly build and after some time will be available as `streaming-data-types/XXXXXXX@ess-dmsc/testing`.
+   ```
+   conan create . streaming-data-types/XXXXXXX@ess-dmsc/stable --build
+   ```
 
+   Where **XXXXXXX** is the first 7 characters in the SHA of the commit of _streaming-data-types_ that you are using. Note that this is used to indicate the version of the conan package.
 
+3. Upload the new package to the relevant conan package repository by executing:
 
-### Alternatively
-1. Edit line 8 of the *conanfile.py*-file in this repository to checkout the version of *streaming-data-types* that you want to package. Note that this is used to indicate the version of the conan package.
+   ```
+   conan upload streaming-data-types/XXXXXXX@ess-dmsc/stable --remote alias_of_repository
+   ```
 
-2. Edit line 9 of *Jenkinsfile* and set `conanPackageChannel` to `testing` if you want to use this package before the schema's PR is accepted into [streaming-data-types](https://github.com/ess-dmsc/streaming-data-types).
-
-3. When in the directory of the local copy of *conan-streaming-data-types*, execute this command:
-
-	```
-	conan create . streaming-data-types/XXXXXXX@ess-dmsc/stable
-	```
-	Where **XXXXXXX** is the first 7 characters in the SHA of the commit of *streaming-data-types* that you are using. Note that this is used to indicate the version of the conan package.
-
-4. Upload the new package to the relevant conan package repository by executing:
-
-	```
-	conan upload streaming-data-types/XXXXXXX@ess-dmsc/stable --remote alias_of_repository
-	```
-
-	Where **XXXXXXX** is the version of the conan package as mentioned above and **alias\_of\_repository** is exactly what it says. You can list all the repositories that your local conan installation is aware of by running: `conan remote list`.
+   Where **XXXXXXX** is the version of the conan package as mentioned above and **alias_of_repository** is exactly what it says. You can list all the repositories that your local conan installation is aware of by running: `conan remote list`; it is probably `ecdc-conan-virtual`.
