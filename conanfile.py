@@ -5,26 +5,21 @@ from conans.util import files
 
 class StreamingDataTypesConan(ConanFile):
     name = "streaming-data-types"
-    version = "f03c5d2"
+    version = "dce8d4e"
     license = "BSD 2-Clause"
-    url = "https://bintray.com/ess-dmsc/streaming-data-types"
     settings = "compiler", "arch"
     generators = "cmake"
-    requires = "flatbuffers/1.12.0"
-    build_requires = "flatc/1.12.0"
+    requires = "flatbuffers/24.3.25"
 
     def source(self):
-        self.run(
-            "git clone https://github.com/ess-dmsc/{}.git".format(self.name)
-        )
+        self.run("git clone https://github.com/ess-dmsc/{}.git".format(self.name))
         with tools.chdir("./{}".format(self.name)):
             self.run("git checkout {}".format(self.version))
 
     def build(self):
         files.mkdir("./{}/build".format(self.name))
         shutil.copyfile(
-            "conanbuildinfo.cmake",
-            "./{}/build/conanbuildinfo.cmake".format(self.name)
+            "conanbuildinfo.cmake", "./{}/build/conanbuildinfo.cmake".format(self.name)
         )
         with tools.chdir("./{}/build".format(self.name)):
             cmake = CMake(self)
